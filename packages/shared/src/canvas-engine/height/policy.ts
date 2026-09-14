@@ -118,7 +118,7 @@ export const NODE_SHELL_INSET = 6;
 
 /**
  * Authored content length (characters) past which a newly created note
- * is born **collapsed** — pinned to the policy minimum with the expand
+ * is born **collapsed** — pinned to the policy's preview height with the expand
  * affordance showing — instead of auto-sized to its full content.
  *
  * Auto height is the right default for a note you can take in at a

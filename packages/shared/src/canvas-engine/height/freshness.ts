@@ -24,12 +24,13 @@ import type { Node } from '@xyflow/react';
 /**
  * Version of the note rendering pipeline as far as height is concerned.
  *
- * Bump this whenever a change can alter the rendered height of unchanged
- * content — typography tokens, note padding, editor plugin chrome, the
- * measurement rule itself. Every stored hint becomes `stale` on the next
- * load, which costs one re-measurement per node and nothing else.
+ * Bump this whenever a change invalidates the intrinsic measurement of
+ * unchanged content — typography tokens, note padding, editor plugin chrome,
+ * or the measurement rule itself. Materialization-only policy changes such as
+ * a new minimum reuse the same measurement under the current policy. Every
+ * stale hint costs one re-measurement per node.
  */
-export const HEIGHT_LAYOUT_VERSION = 5;
+export const HEIGHT_LAYOUT_VERSION = 4;
 
 /**
  * Identity of the thing an intrinsic height was measured against.

@@ -12,6 +12,7 @@ import {
   NOTE_COLLAPSE_CONTENT_THRESHOLD,
 } from '@huabu/shared/canvas-engine';
 
+import { Button } from '@/components/Common/Button';
 import { FloatingToolbar } from '@/components/Common/FloatingToolbar';
 import { Loading } from '@/components/Common/Loading';
 import { MilkdownPreview } from '@/components/Milkdown';
@@ -531,12 +532,15 @@ export const NoteNode = memo(
                       transformOrigin: 'bottom center',
                     }}
                   >
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
+                      iconOnly
+                      size="sm"
                       // `nodrag` / `nopan` stop React Flow from reading
                       // the press as the start of a node drag or a
                       // canvas pan before the click ever lands.
-                      className="nodrag nopan text-fg-subtle hover:text-fg-default hover:bg-hover pointer-events-auto flex size-6 cursor-pointer items-center justify-center rounded"
+                      className="nodrag nopan text-fg-subtle enabled:hover:text-fg-default enabled:hover:bg-hover pointer-events-auto size-6 rounded p-0"
+                      tooltipWrapperClassName="nodrag nopan pointer-events-auto inline-flex"
                       title={heightToggleLabel}
                       aria-label={heightToggleLabel}
                       aria-expanded={!isFixedHeight}
@@ -554,7 +558,7 @@ export const NoteNode = memo(
                       ) : (
                         <ChevronsUp size={14} />
                       )}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

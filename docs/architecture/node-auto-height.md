@@ -50,7 +50,7 @@ The chevron renders when the note is truncated (pointing down: expand) and also 
 A stored height is meaningless without proof of what it measured. `data.autoHeight.measuredFor` carries an [`AutoHeightKey`](../../packages/shared/src/canvas-engine/height/freshness.ts): `` `${HEIGHT_LAYOUT_VERSION}:${nodeRevisionOf({ content, src })}` ``.
 
 - **Content revision** proves the height still describes the node's content. Without it, a note rewritten by an agent while offscreen would keep a silently wrong height.
-- **`HEIGHT_LAYOUT_VERSION`** is bumped whenever a change alters the rendered height of unchanged content — typography, note padding, the measurement rule itself. Hints live in user workspaces and cannot be cleared retroactively; one integer buys global invalidation.
+- **`HEIGHT_LAYOUT_VERSION`** is bumped whenever a change invalidates the intrinsic measurement of unchanged content — typography, note padding, editor plugin chrome, or the measurement rule itself. Intrinsic-to-layout policy changes such as a new minimum reuse the stored measurement and apply the current policy during materialization. Hints live in user workspaces and cannot be cleared retroactively; one integer buys global invalidation.
 
 The reference width is **not** in the key: it is a constant of the node type. The one operation that changes it is a type conversion, which drops the hint outright rather than relying on a comparison.
 

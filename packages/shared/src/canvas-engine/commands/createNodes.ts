@@ -125,7 +125,7 @@ const createNodes: CommandDefinition<Cmd> = {
         getHeightPolicy(nodeType).kind === 'toggleable';
 
       // A note long enough to bury its neighbours starts collapsed at
-      // the policy minimum rather than auto-sized to its full content.
+      // the policy's preview height rather than auto-sized to its full content.
       // Only when the caller expressed no height preference at all: a
       // number pins as always, and an explicit `'auto'` is the author
       // saying "expand this one", which outranks the heuristic.

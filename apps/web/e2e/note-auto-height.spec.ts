@@ -297,10 +297,8 @@ test.describe('note auto height', () => {
   test('a long agent note is born collapsed and expands from its chevron', async ({
     page,
   }) => {
-    // The two halves of the same promise: a document-length note must
-    // not bury the canvas it lands on, and the way back out must be one
-    // click away. Only meaningful together — collapsing without a
-    // reachable expand affordance is a trap.
+    // The complete promise: a document-length note must not bury the canvas it
+    // lands on, and expanding or restoring that preview must each be one click.
     await openNewCanvas(page);
     const markdown = Array.from(
       { length: 20 },
@@ -347,14 +345,30 @@ test.describe('note auto height', () => {
     expect(collapsedHeight).toBeGreaterThan(200);
 
     await note.click({ force: true });
-    await page
-      .getByRole('button', { name: 'Show the whole note', exact: true })
-      .click();
+    const showWholeNote = page.getByRole('button', {
+      name: 'Show the whole note',
+      exact: true,
+    });
+    await expect(showWholeNote).toHaveAttribute('aria-expanded', 'false');
+    await expect(showWholeNote.locator('.lucide-chevrons-down')).toHaveCount(1);
+    await showWholeNote.click();
 
     await expect.poll(heightOf).toBeGreaterThan(collapsedHeight + 500);
 
+    const collapseNote = page.getByRole('button', {
+      name: 'Collapse this note',
+      exact: true,
+    });
+    await expect(collapseNote).toHaveAttribute('aria-expanded', 'true');
+    await expect(collapseNote.locator('.lucide-chevrons-up')).toHaveCount(1);
+    await collapseNote.click();
+
+    await expect.poll(heightOf).toBe(collapsedHeight);
+    await expect(showWholeNote).toHaveAttribute('aria-expanded', 'false');
+    await expect(showWholeNote.locator('.lucide-chevrons-down')).toHaveCount(1);
+
     const [overflow] = await measureOverflows(page);
-    expect(overflow).toBeLessThanOrEqual(1);
+    expect(overflow).toBeGreaterThan(1);
   });
 
   test('every auto note fits the content it was measured from', async ({
