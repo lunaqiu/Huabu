@@ -239,6 +239,7 @@ export const NoteNode = memo(
       !isFixedHeight &&
       selected &&
       markdown.length > NOTE_COLLAPSE_CONTENT_THRESHOLD;
+    const showHeightToggle = isFixedHeight || showCollapseControl;
 
     // A name of its own rather than the toolbar's "Switch to fixed
     // height": both controls can be on screen at once, and two buttons
@@ -525,45 +526,48 @@ export const NoteNode = memo(
                   {isTruncated && (
                     <div
                       aria-hidden
+                      data-note-truncation-fade=""
                       className="from-fg-subtle/30 absolute inset-0 bg-linear-to-t to-transparent"
                     />
                   )}
-                  <div
-                    className="relative z-10"
-                    style={{
-                      transform: `scale(${counterZoomScale})`,
-                      transformOrigin: 'bottom center',
-                    }}
-                  >
-                    <Button
-                      variant="ghost"
-                      iconOnly
-                      size="sm"
-                      // `nodrag` / `nopan` stop React Flow from reading
-                      // the press as the start of a node drag or a
-                      // canvas pan before the click ever lands.
-                      className="nodrag nopan text-fg-subtle enabled:hover:text-fg-default enabled:hover:bg-hover pointer-events-auto size-6 rounded p-0"
-                      tooltipWrapperClassName="nodrag nopan pointer-events-auto inline-flex"
-                      title={heightToggleLabel}
-                      aria-label={heightToggleLabel}
-                      aria-expanded={!isFixedHeight}
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (isFixedHeight) {
-                          setNoteHeightMode([id], 'auto');
-                        } else {
-                          collapseNoteToPreview(id);
-                        }
+                  {showHeightToggle && (
+                    <div
+                      className="relative z-10"
+                      style={{
+                        transform: `scale(${counterZoomScale})`,
+                        transformOrigin: 'bottom center',
                       }}
                     >
-                      {isFixedHeight ? (
-                        <ChevronsDown size={14} />
-                      ) : (
-                        <ChevronsUp size={14} />
-                      )}
-                    </Button>
-                  </div>
+                      <Button
+                        variant="ghost"
+                        iconOnly
+                        size="sm"
+                        // `nodrag` / `nopan` stop React Flow from reading
+                        // the press as the start of a node drag or a
+                        // canvas pan before the click ever lands.
+                        className="nodrag nopan text-fg-subtle enabled:hover:text-fg-default enabled:hover:bg-hover pointer-events-auto size-6 rounded p-0"
+                        tooltipWrapperClassName="nodrag nopan pointer-events-auto inline-flex"
+                        title={heightToggleLabel}
+                        aria-label={heightToggleLabel}
+                        aria-expanded={!isFixedHeight}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isFixedHeight) {
+                            setNoteHeightMode([id], 'auto');
+                          } else {
+                            collapseNoteToPreview(id);
+                          }
+                        }}
+                      >
+                        {isFixedHeight ? (
+                          <ChevronsDown size={14} />
+                        ) : (
+                          <ChevronsUp size={14} />
+                        )}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

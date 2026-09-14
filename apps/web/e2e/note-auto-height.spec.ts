@@ -407,6 +407,24 @@ test.describe('note auto height', () => {
     ).toHaveAttribute('aria-expanded', 'false');
   });
 
+  test('a temporarily truncated auto note does not offer collapse', async ({
+    page,
+  }) => {
+    await openNewCanvas(page);
+    await createAgentNote(page, 'Short note.');
+
+    const note = page.locator('.react-flow__node-note');
+    await expect(note.locator('.ProseMirror')).toHaveCount(1);
+    await note.evaluate((element) => {
+      (element as HTMLElement).style.height = '20px';
+    });
+
+    await expect(note.locator('[data-note-truncation-fade]')).toBeVisible();
+    await expect(
+      note.getByRole('button', { name: 'Collapse this note', exact: true }),
+    ).toHaveCount(0);
+  });
+
   test('every auto note fits the content it was measured from', async ({
     page,
   }) => {
