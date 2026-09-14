@@ -321,7 +321,7 @@ export class AcpAgentHandle<
     mode: 'recover' | 'fork',
     turns: readonly AgentTurn[],
   ): Promise<void> {
-    // ACP replays history as one prepended text block, so the payload to
+    // ACP replays history as one appended text block, so the payload to
     // authorize is the text-projected turn set, not the durable one.
     const historyTurns = turns.map(projectTextHistoryTurn);
     const authorization =
@@ -515,8 +515,8 @@ export class AcpAgentHandle<
     const prepared: LoweredAcpPrompt = historyText
       ? {
           ...rendered,
-          serialized: `${historyText}\n\n${rendered.serialized}`,
-          blocks: [{ type: 'text', text: historyText }, ...rendered.blocks],
+          serialized: `${rendered.serialized}\n\n${historyText}`,
+          blocks: [...rendered.blocks, { type: 'text', text: historyText }],
         }
       : rendered;
     onPrepared?.(prepared.serialized);
