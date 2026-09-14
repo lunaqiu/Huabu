@@ -28,6 +28,7 @@ import {
   COMMAND_META,
   applyDeltas,
   applySharedPostEffectsFromWriteResult,
+  collapsedLayoutHeight,
   executeCanvasCommands,
   FRAME_POINTER_CAPTURE_MARGIN,
   getAbsolutePosition as getFrameAbsolutePosition,
@@ -660,6 +661,14 @@ type RFState = {
   flushFrameResizeScale: () => void;
   /** Clear the resize snapshot at the end of the gesture. */
   clearFrameResizeSnapshot: () => void;
+  /**
+   * Pin one note to its canonical collapsed preview height.
+   *
+   * Unlike the generic fixed-height toggle, this deliberately ignores the
+   * remembered user-pinned height and the current measurement. The chevron's
+   * "Collapse this note" command must always make a long auto note smaller.
+   */
+  collapseNoteToPreview: (nodeId: string) => void;
   /**
    * Flip note nodes between fixed (pinned) and auto-fit (content-driven)
    * height in a single shared code path.
@@ -3416,6 +3425,30 @@ const useCanvasStore = create<RFState>()(
     flushFrameResizeScale: resizePreviewController.flushFrameResizeScale,
 
     clearFrameResizeSnapshot: resizePreviewController.clearFrameResizeSnapshot,
+
+    collapseNoteToPreview: (nodeId) => {
+      const node = get().nodes.find((candidate) => candidate.id === nodeId);
+      if (node?.type !== 'note') return;
+
+      const styleWidth = node.style?.width as number | undefined;
+      const measuredWidth = getNodeSize(node).width;
+      const width =
+        typeof styleWidth === 'number' && styleWidth > 0
+          ? styleWidth
+          : measuredWidth;
+      if (!Number.isFinite(width) || width <= 0) return;
+
+      get().beginGesture('SET_NODE_GEOMETRY');
+      get().setNodeGeometry([
+        {
+          nodeId,
+          size: {
+            width,
+            height: collapsedLayoutHeight('note', width),
+          },
+        },
+      ]);
+    },
 
     setNoteHeightMode: (nodeIds, mode) => {
       if (nodeIds.length === 0) return;

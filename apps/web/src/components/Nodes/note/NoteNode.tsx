@@ -73,6 +73,9 @@ export const NoteNode = memo(
   ({ id, data, selected }: NodeProps<NoteNodeType>) => {
     const { t } = useTranslation();
     const updateNodeData = useCanvasStore((s) => s.updateNodeData);
+    const collapseNoteToPreview = useCanvasStore(
+      (s) => s.collapseNoteToPreview,
+    );
     const setNoteHeightMode = useCanvasStore((s) => s.setNoteHeightMode);
     const moveNoteBlockIntoNote = useCanvasStore(
       (s) => s.moveNoteBlockIntoNote,
@@ -547,10 +550,11 @@ export const NoteNode = memo(
                       onPointerDown={(e) => e.stopPropagation()}
                       onClick={(e) => {
                         e.stopPropagation();
-                        setNoteHeightMode(
-                          [id],
-                          isFixedHeight ? 'auto' : 'fixed',
-                        );
+                        if (isFixedHeight) {
+                          setNoteHeightMode([id], 'auto');
+                        } else {
+                          collapseNoteToPreview(id);
+                        }
                       }}
                     >
                       {isFixedHeight ? (

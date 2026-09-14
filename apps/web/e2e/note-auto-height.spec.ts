@@ -371,6 +371,42 @@ test.describe('note auto height', () => {
     expect(overflow).toBeGreaterThan(1);
   });
 
+  test('collapse uses the preview height without a remembered fixed height', async ({
+    page,
+  }) => {
+    await openNewCanvas(page);
+    const markdown = Array.from(
+      { length: 10 },
+      (_, index) =>
+        `Paragraph ${index + 1} has enough text to wrap across several lines while keeping this note explicitly auto-sized from creation.`,
+    ).join('\n\n');
+    await createAgentNote(page, markdown);
+
+    const note = page.locator('.react-flow__node-note');
+    await expect(note.locator('.ProseMirror')).toHaveCount(1);
+    await page.keyboard.press('Escape');
+
+    const heightOf = () =>
+      note.evaluate((element) =>
+        parseFloat((element as HTMLElement).style.height),
+      );
+    await expect.poll(heightOf).toBeGreaterThan(600);
+
+    await note.click({ force: true });
+    await page
+      .getByRole('button', { name: 'Collapse this note', exact: true })
+      .click();
+
+    await expect.poll(heightOf).toBeGreaterThan(300);
+    await expect.poll(heightOf).toBeLessThan(400);
+    await expect(
+      page.getByRole('button', {
+        name: 'Show the whole note',
+        exact: true,
+      }),
+    ).toHaveAttribute('aria-expanded', 'false');
+  });
+
   test('every auto note fits the content it was measured from', async ({
     page,
   }) => {
