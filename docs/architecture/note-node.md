@@ -84,7 +84,7 @@ In `MilkdownPreview`, `Tab` is deliberately _not_ in the swallowed-key set: its 
 
 ## 6. Link activation
 
-In an editable note, `Ctrl`-click (`Cmd` on macOS, where `Ctrl`-click is the secondary-click gesture) opens the link under the pointer. A plain click is reserved for placing the caret, which keeps link text editable, following the same convention as VS Code, Word and Obsidian. In either read-only preview mode, a plain primary click opens the link because there is no caret-editing conflict; only the primary button counts.
+In an editable note, `Ctrl`-click (`Cmd` on macOS, where `Ctrl`-click is the secondary-click gesture) opens the link under the pointer. A plain click is reserved for placing the caret, which keeps link text editable, following the same convention as VS Code, Word and Obsidian. In either read-only preview mode, a plain primary click opens the link because there is no caret-editing conflict; only the primary button counts. Preview anchors carry React Flow's `nodrag` class, so pointer movement on a link cannot turn link activation into a node drag while the rest of the note remains draggable.
 
 ```
 read-only primary click OR editable Ctrl/Cmd + primary click on <a href>

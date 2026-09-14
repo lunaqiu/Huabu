@@ -1736,6 +1736,12 @@ function outdentSelection(listItemType: NodeType): Command {
   };
 }
 
+function markPreviewLinksNoDrag(root: HTMLElement): void {
+  root.querySelectorAll('a[href]').forEach((anchor) => {
+    anchor.classList.add('nodrag');
+  });
+}
+
 /**
  * Build and start a Crepe-backed editor.
  *
@@ -1884,6 +1890,21 @@ export async function createMilkdown(
         }),
     ),
   );
+  if (previewMode || !editable) {
+    crepe.editor.use(
+      $prose(
+        () =>
+          new Plugin({
+            view: (view) => {
+              markPreviewLinksNoDrag(view.dom);
+              return {
+                update: (nextView) => markPreviewLinksNoDrag(nextView.dom),
+              };
+            },
+          }),
+      ),
+    );
+  }
   crepe.editor.use(
     $prose(
       (ctx) =>
